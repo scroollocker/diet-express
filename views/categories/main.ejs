@@ -1,0 +1,86 @@
+<div class="container" ng-init="onload()">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="float-right">
+                <button class="btn btn-primary" ng-click="addNew()"><i class="fa fa-plus-circle"></i> Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <h4>Список категорий</h4>
+
+    <div class="fixed-top fixed-toolbar" ng-if="selectedCategory">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="edit()"><i class="fa fa-pen"></i> Изменить</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="hideToolbar()"><i class="fa fa-window-close"></i> Отмена</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="text-center" ng-if="!isLoading && getCategories().length === 0">
+        <h2><i class="fa fa-flag"></i></h2>
+        <h2>Записи не найдены</h2>
+    </div>
+
+    <div class="text-center" ng-if="isLoading">
+        <h2><i class="fa fa-spin fa-spinner"></i></h2>
+        <h2>Идет загрузка...</h2>
+    </div>
+
+    <div class="row" ng-if="!isLoading && getCategories().length > 0">
+
+        <div class="col-md-12">
+            <div class="form-group float-right">
+                <input class="form-control" placeholder="Поиск..." ng-model="searchText">
+            </div>
+            <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="category in getCategories() | filter: searchText" ng-click="selectCategory(category)" ng-class="{'selected-row': category.selected}">
+                    <td ng-bind="::category.category_id"></td>
+                    <td ng-bind="::category.name"></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="category-edit-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Категория</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="categoryForm">
+                    <div class="form-group">
+                        <label>
+                            Название:
+                        </label>
+                        <input name="name" class="form-control" ng-class="{'is-invalid': categoryForm.name.$invalid}" placeholder="Название категории" required ng-model="editCategory.name">
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                <button type="button" class="btn btn-primary" ng-click="saveCategory()" ng-disabled="categoryForm.$invalid"><i class="fa fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>

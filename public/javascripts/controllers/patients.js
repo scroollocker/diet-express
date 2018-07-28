@@ -65,6 +65,10 @@ app.controller('PatientsController', ['$scope', 'PatientFactory', function ($sco
                 return;
             }
 
+            if ($scope.selectedPatient) {
+                $scope.selectedPatient.selected = false;
+            }
+
             $scope.selectedPatient = patient;
             $scope.selectedPatient.selected = true;
             jQuery('#patient-edit-dialog').modal('hide');

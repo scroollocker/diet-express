@@ -10,4 +10,8 @@ router.get('/patients', function(req, res, next) {
     res.render('patients/main');
 });
 
+router.get('/categories', function (req, res, next) {
+    res.render('categories/main');
+});
+
 module.exports = router;
