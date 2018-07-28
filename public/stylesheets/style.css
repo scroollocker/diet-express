@@ -1,0 +1,22 @@
+
+.login-form {
+  width: 400px;
+  margin: 0 auto;
+  padding: 50px;
+}
+
+.fixed-toolbar {
+  padding: 15px;
+  background-color: #007bff;
+
+}
+
+.fixed-toolbar a, a:hover, a:visited, a:focus  {
+  color: #fff;
+}
+
+.selected-row {
+  background-color: #eee;
+}
+
+

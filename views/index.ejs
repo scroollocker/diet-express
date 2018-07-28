@@ -1,0 +1,35 @@
+<%- include('header.ejs', {
+  pageTitle: 'Управление диетой'
+}); %>
+
+<script src="/javascripts/main.js" type="application/javascript"></script>
+<script src="/javascripts/providers/patients.js"></script>
+<script src="/javascripts/controllers/patients.js"></script>
+
+<div ng-app="diet-app">
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="javascript:void(0);"><img src="/images/logo.jpg" width="100"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#!/"><i class="fa fa-home"></i> Главная</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#!/patients"><i class="fa fa-user-tag"></i> Пациенты</a>
+        </li>
+
+      </ul>
+    </div>
+  </nav>
+
+
+  <div ng-view></div>
+</div>
+
+
+<%- include('footer.ejs'); %>

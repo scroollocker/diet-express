@@ -1,0 +1,125 @@
+<div class="container" ng-init="onload()">
+    <div class="row">
+        <div class="col-md-12">
+            <button ng-click="addNew()" class="btn btn-primary float-right"><i class="fa fa-plus-circle"></i> Добавить</button>
+        </div>
+    </div>
+
+    <h4>Список пациентов</h4>
+
+    <div class="fixed-top fixed-toolbar" ng-if="selectedPatient">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+                <a class="nav-link" href><i class="fa fa-history"></i> История</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="edit()"><i class="fa fa-pen"></i> Изменить</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="disablePatient()"><i class="fa fa-trash-alt"></i> Отключить</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="hideToolbar()"><i class="fa fa-window-close"></i> Отмена</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="text-center" ng-if="!isLoading && getPatients().length === 0">
+        <h2><i class="fa fa-flag"></i></h2>
+        <h2>Записи не найдены</h2>
+    </div>
+
+    <div class="text-center" ng-if="isLoading">
+        <h2><i class="fa fa-spin fa-spinner"></i></h2>
+        <h2>Идет загрузка...</h2>
+    </div>
+
+    <div class="row" ng-if="!isLoading && getPatients().length > 0">
+
+        <div class="col-md-12">
+            <div class="form-group float-right">
+                <input class="form-control" placeholder="Поиск..." ng-model="searchText">
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО</th>
+                        <th>Возраст</th>
+                        <th>Вес</th>
+                        <th>Пол</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="patient in getPatients() | filter: searchText" ng-click="selectPatient(patient)" ng-class="{'selected-row': patient.selected}">
+                        <td ng-bind="::patient.patient_id"></td>
+                        <td ng-bind="::patient.fio"></td>
+                        <td ng-bind="::patient.age"></td>
+                        <td ng-bind="::patient.weight"></td>
+                        <td>{{ patient.gender == 1 ? 'Муж' : 'Жен' }}</td>
+                        <td>{{ patient.disable == 1 ? 'Отключен' : 'Активен' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div id="patient-edit-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Пациент</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="patientForm">
+                    <div class="form-group">
+                    <label>
+                        ФИО:
+                    </label>
+                    <input name="fio" class="form-control" ng-class="{'is-invalid': patientForm.fio.$invalid}" placeholder="ФИО пациента" required ng-model="editPatient.fio">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Возраст:
+                        </label>
+                        <input class="form-control" placeholder="Возраст пациента" ng-model="editPatient.age">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Вес:
+                        </label>
+                        <input class="form-control" placeholder="Вес пациента" ng-model="editPatient.weight">
+                    </div>
+                    <div class="form-group" >
+                        <label>
+                            Пол:
+                        </label>
+                        <div class="form-group" ng-class="{'text-danger': patientForm.patient_gender.$invalid}">
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" required name="patient_gender" ng-value="1" ng-model="editPatient.gender"> Муж.
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" required name="patient_gender" ng-value="2" ng-model="editPatient.gender"> Жен.
+                            </label>
+                        </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                <button type="button" class="btn btn-primary" ng-click="savePatient()" ng-disabled="patientForm.$invalid"><i class="fa fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
