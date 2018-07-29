@@ -1,0 +1,242 @@
+<div class="container" ng-init="onload()">
+
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-primary float-right" ng-click="addNew()"><i class="fa fa-plus-circle"></i> Добавить</button>
+        </div>
+    </div>
+
+    <h4>Список ингредиентов</h4>
+
+    <div class="fixed-top fixed-toolbar" ng-if="selectedIngredient">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="edit()"><i class="fa fa-pen"></i> Изменить</a>
+            </li>
+            <li class="nav nav-pills nav-fill">
+                <a class="nav-link" href ng-click="remove()"><i class="fa fa-trash-alt"></i> Удалить</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="hideToolbar()"><i class="fa fa-window-close"></i> Отмена</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="text-center" ng-if="!isLoading && getIngredients().length === 0">
+        <h2><i class="fa fa-flag"></i></h2>
+        <h2>Записи не найдены</h2>
+    </div>
+
+    <div class="text-center" ng-if="isLoading">
+        <h2><i class="fa fa-spin fa-spinner"></i></h2>
+        <h2>Идет загрузка...</h2>
+    </div>
+
+    <div class="row" ng-if="!isLoading && getIngredients().length > 0">
+
+        <div class="col-md-12">
+            <div class="form-group float-right">
+                <input class="form-control" placeholder="Поиск..." ng-model="searchText">
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="ingredient in getIngredients() | filter: searchText" ng-click="selectIngredient(ingredient)" ng-class="{'selected-row': ingredient.selected}">
+                        <td ng-bind="::ingredient.ingredient_id"></td>
+                        <td ng-bind="::ingredient.ingredient_name"></td>
+                        <td ng-bind="::ingredient.category_name"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="ingredient-edit-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ингредиент</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-dark">
+                    Заполняется из расчета на 100г продукта.
+                </div>
+                <form name="ingredientForm">
+                    <div class="form-group">
+                        <label>
+                            Название
+                        </label>
+                        <input ng-model="editIngredient.ingredient_name" class="form-control" name="ingredient_name" type="text" placeholder="Название ингредиента" required ng-class="{'is-invalid': ingredientForm.ingredient_name.$invalid}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Категория
+                        </label>
+                        <select ng-model="editIngredient.category_id" required class="form-control" name="ingredient_category" ng-class="{'is-invalid': ingredientForm.ingredient_category.$invalid}">
+                            <option value="">Выберите...</option>
+                            <option ng-repeat="item in getCategories()" ng-value="item.category_id">{{ item.name }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Вода, г</label>
+                        <input class="form-control" ng-model="editIngredient.voda">
+                    </div>
+                    <div class="form-group">
+                        <label>Белки, г</label>
+                        <input class="form-control" ng-model="editIngredient.belok">
+                    </div>
+                    <div class="form-group">
+                        <label>Жиры, г</label>
+                        <input class="form-control" ng-model="editIngredient.jir">
+                    </div>
+                    <h5>Углеводы, г</h5>
+                    <div class="form-group">
+                        <label>Углеводы, г</label>
+                        <input class="form-control" ng-model="editIngredient.uglevod">
+                    </div>
+                    <div class="form-group">
+                        <label>Моно- и дисахориды, г</label>
+                        <input class="form-control" ng-model="editIngredient.hloridy">
+                    </div>
+                    <div class="form-group">
+                        <label>Клечатка, г</label>
+                        <input class="form-control" ng-model="editIngredient.kletchatka">
+                    </div>
+                    <div class="form-group">
+                        <label>Крахмал, г</label>
+                        <input class="form-control" ng-model="editIngredient.krahmal">
+                    </div>
+                    <div class="form-group">
+                        <label>Пектин, г</label>
+                        <input class="form-control" ng-model="editIngredient.pektin">
+                    </div>
+                    <div class="form-group">
+                        <label>Органические кислоты, г</label>
+                        <input class="form-control" ng-model="editIngredient.org_kisloty">
+                    </div>
+                    <div class="form-group">
+                        <label>Зола, г</label>
+                        <input class="form-control" ng-model="editIngredient.zola">
+                    </div>
+                    <h5>Микроэлементы, мг</h5>
+                    <div class="form-group">
+                        <label>Калий</label>
+                        <input class="form-control" ng-model="editIngredient.kaliy">
+                    </div>
+                    <div class="form-group">
+                        <label>Кальций</label>
+                        <input class="form-control" ng-model="editIngredient.kalciy">
+                    </div>
+                    <div class="form-group">
+                        <label>Магний</label>
+                        <input class="form-control" ng-model="editIngredient.magniy">
+                    </div>
+                    <div class="form-group">
+                        <label>Натрий</label>
+                        <input class="form-control" ng-model="editIngredient.natriy">
+                    </div>
+                    <div class="form-group">
+                        <label>Фосфор</label>
+                        <input class="form-control" ng-model="editIngredient.fosfor">
+                    </div>
+                    <div class="form-group">
+                        <label>Железо</label>
+                        <input class="form-control" ng-model="editIngredient.zhelezo">
+                    </div>
+                    <div class="form-group">
+                        <label>Йод</label>
+                        <input class="form-control" ng-model="editIngredient.yod">
+                    </div>
+                    <div class="form-group">
+                        <label>Кобальт</label>
+                        <input class="form-control" ng-model="editIngredient.kobalt">
+                    </div>
+                    <div class="form-group">
+                        <label>Марганец</label>
+                        <input class="form-control" ng-model="editIngredient.marganec">
+                    </div>
+                    <div class="form-group">
+                        <label>Медь</label>
+                        <input class="form-control" ng-model="editIngredient.med">
+                    </div>
+                    <div class="form-group">
+                        <label>Молибден</label>
+                        <input class="form-control" ng-model="editIngredient.malibden">
+                    </div>
+                    <div class="form-group">
+                        <label>Фтор</label>
+                        <input class="form-control" ng-model="editIngredient.ftor">
+                    </div>
+                    <div class="form-group">
+                        <label>Цинк</label>
+                        <input class="form-control" ng-model="editIngredient.cink">
+                    </div>
+                    <h4>Витамины, мг</h4>
+                    <div class="form-group">
+                        <label>А (Ретинол)</label>
+                        <input class="form-control" ng-model="editIngredient.aretinol">
+                    </div>
+                    <div class="form-group">
+                        <label>В каротин</label>
+                        <input class="form-control" ng-model="editIngredient.bkarotin">
+                    </div>
+                    <div class="form-group">
+                        <label>Е (Токоферол)</label>
+                        <input class="form-control" ng-model="editIngredient.etokoferol">
+                    </div>
+                    <div class="form-group">
+                        <label>С (Аскарбиновая кислота)</label>
+                        <input class="form-control" ng-model="editIngredient.caskorbinka">
+                    </div>
+                    <div class="form-group">
+                        <label>В1 (Тиамин)</label>
+                        <input class="form-control" ng-model="editIngredient.b1">
+                    </div>
+                    <div class="form-group">
+                        <label>В2 (Рибофлавин)</label>
+                        <input class="form-control" ng-model="editIngredient.b2">
+                    </div>
+                    <div class="form-group">
+                        <label>ВС (Фолиевая кислота), мкт</label>
+                        <input class="form-control" ng-model="editIngredient.bc">
+                    </div>
+                    <div class="form-group">
+                        <label>РР (Ниацин)</label>
+                        <input class="form-control" ng-model="editIngredient.pp">
+                    </div>
+                    <div class="form-group">
+                        <label>Калорийность, ккал</label>
+                        <input class="form-control" ng-model="editIngredient.kkal">
+                    </div>
+                    <div class="form-group">
+                        <label>Время переваривания, час</label>
+                        <input class="form-control" ng-model="editIngredient.perevar">
+                    </div>
+                    <div class="form-group">
+                        <label>Окисление, %</label>
+                        <input class="form-control" ng-model="editIngredient.okislenie">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                <button type="button" class="btn btn-primary" ng-click="saveIngredient()" ng-disabled="ingredientForm.$invalid"><i class="fa fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>

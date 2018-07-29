@@ -14,6 +14,7 @@ var login = require('./routes/login/login');
 var templates = require('./routes/templates/templates');
 var patients = require('./routes/patients/patients');
 var categories = require('./routes/categories/categories');
+var ingredients = require('./routes/ingredients/ingredients');
 
 
 var app = express();
@@ -50,6 +51,7 @@ app.use('/', index);
 app.use('/templates', templates);
 app.use('/patients', patients);
 app.use('/categories', categories);
+app.use('/ingredients', ingredients);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

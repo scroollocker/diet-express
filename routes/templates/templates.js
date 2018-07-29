@@ -14,4 +14,8 @@ router.get('/categories', function (req, res, next) {
     res.render('categories/main');
 });
 
+router.get('/ingredients', function (req, res, next) {
+    res.render('ingredients/main');
+});
+
 module.exports = router;
