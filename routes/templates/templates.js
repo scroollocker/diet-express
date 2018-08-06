@@ -18,4 +18,12 @@ router.get('/ingredients', function (req, res, next) {
     res.render('ingredients/main');
 });
 
+router.get('/calculator', function (req, res, next) {
+    res.render('calculator/main');
+});
+
+router.get('/foods', function (req, res, next) {
+    res.render('foods/foods');
+});
+
 module.exports = router;

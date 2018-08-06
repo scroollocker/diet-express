@@ -19,4 +19,12 @@
   background-color: #eee;
 }
 
+.availible-ingredients {
+  max-width: 400px;
+}
+
+.calculate-view {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 

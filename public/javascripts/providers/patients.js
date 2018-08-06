@@ -18,6 +18,24 @@ app.factory('PatientFactory', ['$http', function ($http) {
         }
     };
 
+    var getActivePatients = function (callback) {
+        if (callback && typeof callback === 'function') {
+            $http.get('/patients/active').then(function (response) {
+                response = response.data;
+
+                if (response.status == true) {
+                    callback(null, response.patients);
+                }
+                else {
+                    callback(new Error(response.message));
+                }
+            }, function (err) {
+                console.log(err);
+                callback(new Error('Произошла системная ошибка'));
+            })
+        }
+    };
+
     var modifyPatient  = function (patient, callback) {
         if (callback && typeof callback === 'function') {
             var request = patient;
@@ -56,12 +74,34 @@ app.factory('PatientFactory', ['$http', function ($http) {
                callback(new Error('Произошла системная ошибка'));
             });
         }
-    }
+    };
+
+    var saveFood = function (food, callback) {
+        if (callback && typeof callback === 'function') {
+            var request = food;
+
+            $http.post('/patients/saveFood', request).then(function (response) {
+                response = response.data;
+
+                if (response.status) {
+                    console.log('Saved');
+                }
+                else {
+                    callback(new Error(response.message));
+                }
+            }, function (err) {
+                console.log(err);
+                callback(new Error('Произошла системная ошибка'));
+            })
+        }
+    };
 
     return {
         getPatients: getPatients,
+        getActivePatients: getActivePatients,
         modifyPatient: modifyPatient,
-        disablePatient: disablePatient
+        disablePatient: disablePatient,
+        saveFood: saveFood
     }
 
 }]);

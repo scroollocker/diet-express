@@ -17,6 +17,14 @@ app.config(function($routeProvider) {
             templateUrl : "/templates/ingredients",
             controller: 'IngredientsController'
         })
+        .when("/calculator", {
+            templateUrl : "/templates/calculator",
+            controller: 'CalculatorController'
+        })
+        .when("/foods/:patientId", {
+            templateUrl : "/templates/foods",
+            controller: 'HistoryController'
+        })
         .otherwise({
             redirectTo: '/'
         });

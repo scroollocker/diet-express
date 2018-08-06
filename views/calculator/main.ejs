@@ -1,0 +1,346 @@
+<div class="container" ng-init="onload()">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-dark">
+                Добавьте продукты в список. Система автоматически подсчитает вещества в ингредиентах.
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group float-right">
+                <button ng-click="openSaveDialog()" ng-disabled="foods.length == 0 || showCalculated == false" class="btn btn-success"><i class="fa fa-save"></i> Сохранить</button>
+                <button ng-click="calculate()" ng-disabled="foods.length == 0" class="btn btn-warning"><i class="fa fa-calculator"></i> Подсчитать</button>
+                <button ng-click="addNew()" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center" ng-if="getFoods().length === 0">
+        <h2><i class="fa fa-flag"></i></h2>
+        <h2>Записи не найдены. Добавьте запись.</h2>
+    </div>
+
+    <!--<div class="form-group">-->
+        <!--<div class='input-group date' id='select-date'>-->
+            <!--<input type='text' class="form-control" />-->
+            <!--<span class="input-group-addon">-->
+                        <!--<span class="fa fa-calendar-alt"></span>-->
+                    <!--</span>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <div class="row" ng-if="getFoods().length > 0 && showCalculated === true">
+        <div class="col-md-12">
+
+            <div class="card calculate-view">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Результаты вычисления
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                        <tr>
+                            <td>Вода, г</td>
+                            <td ng-bind="::calculatedIngredient.voda"></td>
+                        </tr>
+                        <tr>
+                            <td>Белки, г</td>
+                            <td ng-bind="::calculatedIngredient.belok"></td>
+                        </tr>
+                        <tr >
+                            <td>Жиры, г</td>
+                            <td ng-bind="::calculatedIngredient.jir"></td>
+                        </tr>
+                        <tr>
+                        <td colspan="2"><h5>Углеводы, г</h5></td>
+                        </tr>
+                        <tr >
+                            <td>Углеводы, г</td>
+                            <td ng-bind="::calculatedIngredient.uglevod"></td>
+                        </tr>
+                        <tr >
+                            <td>Моно- и дисахориды, г</td>
+                            <td ng-bind="::calculatedIngredient.hloridy"></td>
+                        </tr>
+                        <tr >
+                            <td>Клечатка, г</td>
+                            <td ng-bind="::calculatedIngredient.kletchatka"></td>
+                        </tr>
+                        <tr >
+                            <td>Крахмал, г</td>
+                            <td ng-bind="::calculatedIngredient.krahmal"></td>
+                        </tr>
+                        <tr >
+                            <td>Пектин, г</td>
+                            <td ng-bind="::calculatedIngredient.pektin"></td>
+                        </tr>
+                        <tr >
+                            <td>Органические кислоты, г</td>
+                            <td ng-bind="::calculatedIngredient.org_kisloty"></td>
+                        </tr>
+                        <tr >
+                            <td>Зола, г</td>
+                            <td ng-bind="::calculatedIngredient.zola"></td>
+                        </tr>
+                            <tr>
+                        <td colspan="2"><h5>Микроэлементы, мг</h5></td>
+                            </tr>
+                        <tr >
+                            <td>Калий</td>
+                            <td ng-bind="::calculatedIngredient.kaliy"></td>
+                        </tr>
+                        <tr >
+                            <td>Кальций</td>
+                            <td ng-bind="::calculatedIngredient.kalciy"></td>
+                        </tr>
+                        <tr >
+                            <td>Магний</td>
+                            <td ng-bind="::calculatedIngredient.magniy"></td>
+                        </tr>
+                        <tr >
+                            <td>Натрий</td>
+                            <td ng-bind="::calculatedIngredient.natriy"></td>
+                        </tr>
+                        <tr >
+                            <td>Фосфор</td>
+                            <td ng-bind="::calculatedIngredient.fosfor"></td>
+                        </tr>
+                        <tr >
+                            <td>Железо</td>
+                            <td ng-bind="::calculatedIngredient.zhelezo"></td>
+                        </tr>
+                        <tr >
+                            <td>Йод</td>
+                            <td ng-bind="::calculatedIngredient.yod"></td>
+                        </tr>
+                        <tr >
+                            <td>Кобальт</td>
+                            <td ng-bind="::calculatedIngredient.kobalt"></td>
+                        </tr>
+                        <tr >
+                            <td>Марганец</td>
+                            <td ng-bind="::calculatedIngredient.marganec"></td>
+                        </tr>
+                        <tr >
+                            <td>Медь</td>
+                            <td ng-bind="::calculatedIngredient.med"></td>
+                        </tr>
+                        <tr >
+                            <td>Молибден</td>
+                            <td ng-bind="::calculatedIngredient.malibden"></td>
+                        </tr>
+                        <tr >
+                            <td>Фтор</td>
+                            <td ng-bind="::calculatedIngredient.ftor"></td>
+                        </tr>
+                        <tr >
+                            <td>Цинк</td>
+                            <td ng-bind="::calculatedIngredient.cink"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                        <h4>Витамины, мг</h4>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td>А (Ретинол)</td>
+                            <td ng-bind="::calculatedIngredient.aretinol"></td>
+                        </tr>
+                        <tr >
+                            <td>В каротин</td>
+                            <td ng-bind="::calculatedIngredient.bkarotin"></td>
+                        </tr>
+                        <tr >
+                            <td>Е (Токоферол)</td>
+                            <td ng-bind="::calculatedIngredient.etokoferol"></td>
+                        </tr>
+                        <tr >
+                            <td>С (Аскарбиновая кислота)</td>
+                            <td ng-bind="::calculatedIngredient.caskorbinka"></td>
+                        </tr>
+                        <tr >
+                            <td>В1 (Тиамин)</td>
+                            <td ng-bind="::calculatedIngredient.b1"></td>
+                        </tr>
+                        <tr >
+                            <td>В2 (Рибофлавин)</td>
+                            <td ng-bind="::calculatedIngredient.b2"></td>
+                        </tr>
+                        <tr >
+                            <td>ВС (Фолиевая кислота), мкт</td>
+                            <td ng-bind="::calculatedIngredient.bc"></td>
+                        </tr>
+                        <tr >
+                            <td>РР (Ниацин)</td>
+                            <td ng-bind="::calculatedIngredient.pp"></td>
+                        </tr>
+                        <tr >
+                            <td>Калорийность, ккал</td>
+                            <td ng-bind="::calculatedIngredient.kkal"></td>
+                        </tr>
+                        <tr >
+                            <td>Время переваривания, час</td>
+                            <td ng-bind="::calculatedIngredient.perevar"></td>
+                        </tr>
+                        <tr >
+                            <td>Окисление, %</td>
+                            <td ng-bind="::calculatedIngredient.okislenie"></td>
+                        </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-if="getFoods().length > 0">
+
+        <div class="col-md-12">
+            <h4>Список продуктов</h4>
+            <div class="form-group float-right">
+                <input class="form-control" placeholder="Поиск..." ng-model="searchText">
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Количество ингредиентов</th>
+                        <th>Действие</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in getFoods() | filter: searchText">
+                            <td ng-bind="::item.name"></td>
+                            <td ng-bind="::item.ingredients.length"></td>
+                            <td><button ng-click="removeFood($index)" class="btn btn-danger btn-sm"><span class="fa fa-trash-alt"></span></button> </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="calculator-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Продукт</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="foodForm">
+                    <div class="form-group" ng-if="editFood.ingredients.length > 1">
+                        <label>
+                            Название:
+                        </label>
+                        <input name="name" ng-model="editFood.name" class="form-control" ng-class="{'is-invalid': foodForm.name.$invalid}" placeholder="Название продукта" required>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Доступные ингредиенты</h4>
+                                <div class="form-group">
+                                <input class="form-control" ng-model="searchIngredient" type="text" placeholder="Поиск...">
+                                </div>
+                                <div class="availible-ingredients">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Название</th>
+                                                    <th>Категория</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="ingredient in getIngredients() | filter:searchIngredient">
+                                                    <td ng-bind="::ingredient.ingredient_name"></td>
+                                                    <td ng-bind="::ingredient.category_name"></td>
+                                                    <td><button type="button" class="btn btn-sm btn-primary" ng-click="addIngredient(ingredient)"><i class="fa fa-plus"></i></button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Добавленные ингредиенты</h4>
+
+                                <div class="availible-ingredients">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th>Название</th>
+                                                <th>Количество, г</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="ingredient in editFood.ingredients">
+                                                <td ng-bind="::ingredient.ingredient.ingredient_name"></td>
+                                                <td><input class="form-control" ng-model="ingredient.count" ng-required="true" ></td>
+                                                <td><button type="button" class="btn btn-sm btn-danger" ng-click="removeIngredient(ingredient)"><i class="fa fa-trash-alt"></i></button></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                <button type="button" class="btn btn-primary" ng-click="saveFood()" ng-disabled="foodForm.$invalid"><i class="fa fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="save-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Сохранение расчета</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="saveForm">
+                    <div class="form-group">
+                    <label>Пациент: </label>
+                    <select ng-model="selectedPatient" name="selected_patient" ng-class="{'is-invalid': saveForm.selected_patient.$invalid}" class="form-control" required>
+                        <option value="">Выберите...</option>
+                        <option ng-value="patient" ng-repeat="patient in getPatients()">{{ patient.fio }}</option>
+                    </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Дата:</label>
+                        <input id="select-date" class="form-control" required name="select_date">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                <button type="button" class="btn btn-primary" ng-click="saveToUser(selectedPatient)" ng-disabled="saveForm.$invalid"><i class="fa fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
