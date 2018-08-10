@@ -1,4 +1,4 @@
-app.controller('PatientsController', ['$scope', 'PatientFactory', function ($scope, PatientFactory) {
+app.controller('PatientsController', ['$scope', 'PatientFactory', '$location', function ($scope, PatientFactory, $location) {
 
     $scope.isLoading = false;
 
@@ -32,6 +32,12 @@ app.controller('PatientsController', ['$scope', 'PatientFactory', function ($sco
             $scope.selectedPatient.selected = true;
         }
     }
+
+    $scope.showHistory = function() {
+        var url = '/foods/' + $scope.selectedPatient.patient_id;
+        $location.path(url);
+        $location.replace();
+    };
 
     $scope.onload = function () {
         $scope.isLoading = true;
@@ -96,6 +102,19 @@ app.controller('PatientsController', ['$scope', 'PatientFactory', function ($sco
                 }
                 else {
                     $scope.selectedPatient.disable = 1;
+                }
+            })
+        }
+    };
+
+    $scope.enablePatient = function () {
+        if ($scope.selectedPatient) {
+            PatientFactory.enablePatient($scope.selectedPatient, function (err) {
+                if (err) {
+                    alert(err.message);
+                }
+                else {
+                    $scope.selectedPatient.disable = 0;
                 }
             })
         }

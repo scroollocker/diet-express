@@ -28,6 +28,26 @@ app.factory('HistoryFactory', ['$http', function ($http) {
 
                 });
             }
+        },
+        removeFood: function (data, callback) {
+            if (callback && typeof callback === 'function') {
+                var url = '/patients/removeFood';
+                var request = data;
+
+                $http.post(url, request).then(function (response) {
+                    response = response.data;
+
+                    if (response.status) {
+                        callback(null);
+                    }
+                    else {
+                        callback(new Error(response.message));
+                    }
+                }, function (err) {
+                    console.log(err);
+                    callback(new Error('Произошла системная ошибка'));
+                })
+            }
         }
     }
 

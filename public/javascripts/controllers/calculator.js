@@ -1,4 +1,4 @@
-app.controller('CalculatorController', ['$scope', 'IngredientsFactory', 'PatientFactory', function ($scope, IngredientsFactory, PatientFactory) {
+app.controller('CalculatorController', ['$scope', 'IngredientsFactory', 'PatientFactory', '$location', function ($scope, IngredientsFactory, PatientFactory, $location) {
     $scope.foods = [];
     $scope.ingredients = [];
     $scope.editFood = null;
@@ -136,7 +136,10 @@ app.controller('CalculatorController', ['$scope', 'IngredientsFactory', 'Patient
                 alert(err.message);
             }
             else {
-                alert('Saved');
+                jQuery('#save-dialog').modal('hide');
+                var url = '/foods/' + request.patient_id;
+                $location.path(url);
+                $location.replace();
             }
 
         })

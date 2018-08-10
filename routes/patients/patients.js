@@ -223,6 +223,94 @@ router.post('/modify', function (req, res, next) {
     }
 });
 
+router.post('/removeFood', function (req, res, next) {
+    var data = req.body;
+
+    var rules = {
+        food_id: 'required|integer'
+    };
+
+    var messages = {
+        required: 'Поле :attr обязательно к заполнению',
+        integer: 'Поле :attr должно быть числом'
+    };
+
+    var fields = {
+        food_id: 'ID записи'
+    };
+
+    var v = validator.make(data, rules, messages, fields);
+
+    if (v.fails()) {
+        var errors = v.getErrors();
+
+        var errMsg = validatorHelper.errorToString(errors);
+
+        res.send({
+            status: false,
+            message: errMsg
+        });
+        return;
+    }
+
+    patientModel.removePatientFood(req.environment.database, data, function (err) {
+        if (err) {
+            res.send({
+                status: false,
+                message: err.message
+            });
+            return;
+        }
+
+        res.send({
+            status: true
+        });
+    });
+});
+
+router.post('/enable', function (req, res, next) {
+    var data = req.body;
+
+    var rules = {
+        patient_id: 'required|integer'
+    };
+
+    var messages = {
+        required: 'Поле :attr обязательно к заполнению',
+        integer: 'Поле :attr должно быть целым числом'
+    };
+
+    var fields = {
+        patient_id: 'ID пациента'
+    };
+
+    var v = validator.make(data,rules, messages, fields);
+
+    if (v.fails()) {
+        var errors = v.getErrors();
+        var errMsg = validatorHelper.errorToString(errors);
+        res.send({
+            status: false,
+            message: errMsg
+        });
+    }
+    else {
+        patientModel.enablePatient(req.environment.database, data, function (err) {
+            if (err) {
+                res.send({
+                    status: false,
+                    message: err.message
+                });
+                return;
+            }
+
+            res.send({
+                status: true
+            });
+        });
+    }
+});
+
 router.post('/remove', function (req, res, next) {
     var data = req.body;
 

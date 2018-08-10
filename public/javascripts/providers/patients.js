@@ -76,6 +76,26 @@ app.factory('PatientFactory', ['$http', function ($http) {
         }
     };
 
+    var enablePatient = function (patient, callback) {
+        if (callback && typeof callback === 'function') {
+            var request = patient;
+
+            $http.post('/patients/enable', request).then(function (response) {
+                response = response.data;
+
+                if (response.status) {
+                    callback(null);
+                }
+                else {
+                    callback(new Error(response.message));
+                }
+            }, function (err) {
+                console.log(err);
+                callback(new Error('Произошла системная ошибка'));
+            });
+        }
+    };
+
     var saveFood = function (food, callback) {
         if (callback && typeof callback === 'function') {
             var request = food;
@@ -85,6 +105,7 @@ app.factory('PatientFactory', ['$http', function ($http) {
 
                 if (response.status) {
                     console.log('Saved');
+                    callback(null);
                 }
                 else {
                     callback(new Error(response.message));
@@ -101,7 +122,8 @@ app.factory('PatientFactory', ['$http', function ($http) {
         getActivePatients: getActivePatients,
         modifyPatient: modifyPatient,
         disablePatient: disablePatient,
-        saveFood: saveFood
+        saveFood: saveFood,
+        enablePatient: enablePatient
     }
 
 }]);

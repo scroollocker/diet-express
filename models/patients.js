@@ -272,8 +272,13 @@ module.exports = {
                 ];
 
                 if (patient.date_start && patient.date_start !== undefined) {
-                    params.push(moment(patient.date_start,'DD.MM.YYYY').toDate());
-                    params.push(moment(patient.date_end, 'DD.MM.YYYY').toDate());
+                    var start = ' 00:00:00';
+                    var end = ' 23:59:59';
+
+                    var dateStart = moment(patient.date_start + start, 'DD.MM.YYYY HH:mm:ss').toDate();
+                    var dateEnd = moment(patient.date_end + end, 'DD.MM.YYYY HH:mm:ss').toDate();
+                    params.push(dateStart);
+                    params.push(dateEnd);
                 }
                 else {
                     var start = ' 00:00:00';

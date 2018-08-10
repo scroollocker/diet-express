@@ -10,13 +10,16 @@
     <div class="fixed-top fixed-toolbar" ng-if="selectedPatient">
         <ul class="nav nav-pills nav-fill">
             <li class="nav-item">
-                <a class="nav-link" href><i class="fa fa-history"></i> История</a>
+                <a class="nav-link" href ng-click="showHistory()"><i class="fa fa-history"></i> История</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href ng-click="edit()"><i class="fa fa-pen"></i> Изменить</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" ng-if="selectedPatient.disable == 0">
                 <a class="nav-link" href ng-click="disablePatient()"><i class="fa fa-trash-alt"></i> Отключить</a>
+            </li>
+            <li class="nav-item" ng-if="selectedPatient.disable == 1">
+                <a class="nav-link" href ng-click="enablePatient()"><i class="fa fa-user-check"></i> Включить</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href ng-click="hideToolbar()"><i class="fa fa-window-close"></i> Отмена</a>

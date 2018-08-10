@@ -1,12 +1,15 @@
 <div class="container" ng-init="onload()">
     <div class="row">
         <div class="col-md-12">
-            <h4>Список категорий</h4>
+            <h4>Записи пациентов</h4>
 
-            <div class="fixed-top fixed-toolbar" ng-if="selectedCategory">
+            <div class="fixed-top fixed-toolbar" ng-if="selectedFood">
                 <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">
-                        <a class="nav-link" href ng-click="edit()"><i class="fa fa-pen"></i> Изменить</a>
+                        <a class="nav-link" href ng-click="view()"><i class="fa fa-eye"></i> Посмотреть</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href ng-click="remove()"><i class="fa fa-trash-alt"></i> Удалить</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href ng-click="hideToolbar()"><i class="fa fa-window-close"></i> Отмена</a>
@@ -14,7 +17,21 @@
                 </ul>
             </div>
 
-            <div class="text-center" ng-if="!isLoading && getCategories().length === 0">
+            <div class="form-inline search-box">
+                <div class="form-group search-item">
+                    <label> Дата с: </label>
+                    <input class="form-control" type="text" name="date_from" id="date_from">
+                </div>
+                <div class="form-group search-item">
+                    <label> Дата по: </label>
+                    <input class="form-control" type="text" name="date_to" id="date_to">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" ng-click="filterItems()"><i class="fa fa-search"></i> Найти</button>
+                </div>
+            </div>
+
+            <div class="text-center" ng-if="!isLoading && getFoods().length === 0">
                 <h2><i class="fa fa-flag"></i></h2>
                 <h2>Записи не найдены</h2>
             </div>
@@ -22,6 +39,202 @@
             <div class="text-center" ng-if="isLoading">
                 <h2><i class="fa fa-spin fa-spinner"></i></h2>
                 <h2>Идет загрузка...</h2>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="row" ng-if="!isLoading && getFoods().length > 0">
+        <div class="col-md-12">
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Дата</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="food in getFoods()" ng-click="selectFood(food)" ng-class="{'selected-row': food.selected}">
+                        <td>{{ food.food_id }}</td>
+                        <td>{{ toNormalDate(food.date) }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="view-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Просмотр расчетов</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Вода, г</td>
+                        <td ng-bind="::selectedFood.voda"></td>
+                    </tr>
+                    <tr>
+                        <td>Белки, г</td>
+                        <td ng-bind="::selectedFood.belok"></td>
+                    </tr>
+                    <tr >
+                        <td>Жиры, г</td>
+                        <td ng-bind="::selectedFood.jir"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><h5>Углеводы, г</h5></td>
+                    </tr>
+                    <tr >
+                        <td>Углеводы, г</td>
+                        <td ng-bind="::selectedFood.uglevod"></td>
+                    </tr>
+                    <tr >
+                        <td>Моно- и дисахориды, г</td>
+                        <td ng-bind="::selectedFood.hloridy"></td>
+                    </tr>
+                    <tr >
+                        <td>Клечатка, г</td>
+                        <td ng-bind="::selectedFood.kletchatka"></td>
+                    </tr>
+                    <tr >
+                        <td>Крахмал, г</td>
+                        <td ng-bind="::selectedFood.krahmal"></td>
+                    </tr>
+                    <tr >
+                        <td>Пектин, г</td>
+                        <td ng-bind="::selectedFood.pektin"></td>
+                    </tr>
+                    <tr >
+                        <td>Органические кислоты, г</td>
+                        <td ng-bind="::selectedFood.org_kisloty"></td>
+                    </tr>
+                    <tr >
+                        <td>Зола, г</td>
+                        <td ng-bind="::selectedFood.zola"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><h5>Микроэлементы, мг</h5></td>
+                    </tr>
+                    <tr >
+                        <td>Калий</td>
+                        <td ng-bind="::selectedFood.kaliy"></td>
+                    </tr>
+                    <tr >
+                        <td>Кальций</td>
+                        <td ng-bind="::selectedFood.kalciy"></td>
+                    </tr>
+                    <tr >
+                        <td>Магний</td>
+                        <td ng-bind="::selectedFood.magniy"></td>
+                    </tr>
+                    <tr >
+                        <td>Натрий</td>
+                        <td ng-bind="::selectedFood.natriy"></td>
+                    </tr>
+                    <tr >
+                        <td>Фосфор</td>
+                        <td ng-bind="::selectedFood.fosfor"></td>
+                    </tr>
+                    <tr >
+                        <td>Железо</td>
+                        <td ng-bind="::selectedFood.zhelezo"></td>
+                    </tr>
+                    <tr >
+                        <td>Йод</td>
+                        <td ng-bind="::selectedFood.yod"></td>
+                    </tr>
+                    <tr >
+                        <td>Кобальт</td>
+                        <td ng-bind="::selectedFood.kobalt"></td>
+                    </tr>
+                    <tr >
+                        <td>Марганец</td>
+                        <td ng-bind="::selectedFood.marganec"></td>
+                    </tr>
+                    <tr >
+                        <td>Медь</td>
+                        <td ng-bind="::selectedFood.med"></td>
+                    </tr>
+                    <tr >
+                        <td>Молибден</td>
+                        <td ng-bind="::selectedFood.malibden"></td>
+                    </tr>
+                    <tr >
+                        <td>Фтор</td>
+                        <td ng-bind="::selectedFood.ftor"></td>
+                    </tr>
+                    <tr >
+                        <td>Цинк</td>
+                        <td ng-bind="::selectedFood.cink"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <h4>Витамины, мг</h4>
+                        </td>
+                    </tr>
+                    <tr >
+                        <td>А (Ретинол)</td>
+                        <td ng-bind="::selectedFood.aretinol"></td>
+                    </tr>
+                    <tr >
+                        <td>В каротин</td>
+                        <td ng-bind="::selectedFood.bkarotin"></td>
+                    </tr>
+                    <tr >
+                        <td>Е (Токоферол)</td>
+                        <td ng-bind="::selectedFood.etokoferol"></td>
+                    </tr>
+                    <tr >
+                        <td>С (Аскарбиновая кислота)</td>
+                        <td ng-bind="::selectedFood.caskorbinka"></td>
+                    </tr>
+                    <tr >
+                        <td>В1 (Тиамин)</td>
+                        <td ng-bind="::selectedFood.b1"></td>
+                    </tr>
+                    <tr >
+                        <td>В2 (Рибофлавин)</td>
+                        <td ng-bind="::selectedFood.b2"></td>
+                    </tr>
+                    <tr >
+                        <td>ВС (Фолиевая кислота), мкт</td>
+                        <td ng-bind="::selectedFood.bc"></td>
+                    </tr>
+                    <tr >
+                        <td>РР (Ниацин)</td>
+                        <td ng-bind="::selectedFood.pp"></td>
+                    </tr>
+                    <tr >
+                        <td>Калорийность, ккал</td>
+                        <td ng-bind="::selectedFood.kkal"></td>
+                    </tr>
+                    <tr >
+                        <td>Время переваривания, час</td>
+                        <td ng-bind="::selectedFood.perevar"></td>
+                    </tr>
+                    <tr >
+                        <td>Окисление, %</td>
+                        <td ng-bind="::selectedFood.okislenie"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+
             </div>
         </div>
     </div>
