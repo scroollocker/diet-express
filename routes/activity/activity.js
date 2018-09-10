@@ -32,7 +32,7 @@ router.post('/modify', function(req, res, next) {
     };
 
     if (data.activity_id) {
-        rules.activity_id = 'reuired|integer';
+        rules.activity_id = 'required|integer';
     }
 
     var messages = {
