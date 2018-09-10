@@ -26,4 +26,8 @@ router.get('/foods', function (req, res, next) {
     res.render('foods/foods');
 });
 
+router.get('/activity', function(req, res, next) {
+    res.render('activity/main');
+});
+
 module.exports = router;

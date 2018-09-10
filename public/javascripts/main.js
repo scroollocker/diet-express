@@ -25,6 +25,10 @@ app.config(function($routeProvider) {
             templateUrl : "/templates/foods",
             controller: 'HistoryController'
         })
+        .when("/activity", {
+            templateUrl: "/templates/activity",
+            controller: 'ActivityController'
+        })
         .otherwise({
             redirectTo: '/patients'
         });
