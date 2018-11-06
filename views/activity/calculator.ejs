@@ -1,0 +1,146 @@
+<div class="container" ng-init="onLoad()">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-dark">
+                Калькулятор активностей
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="float-right">
+                <button ng-click="add()" class="btn btn-primary"><i class="fa fa-plus"></i> Добавить</button>
+                <button ng-disabled="getCalculatedActivities().length == 0" ng-click="calculate()" class="btn btn-warning"><i class="fa fa-calculator"></i> Подсчитать</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-top fixed-toolbar" ng-if="selectedActivity">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="edit()"><i class="fa fa-pen"></i> Изменить</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="delete()"><i class="fa fa-trash-alt"></i> Удалить</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href ng-click="hideToolbar()"><i class="fa fa-window-close"></i> Отмена</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row" style="margin-top: 30px;" ng-if="getCalculatedActivities().length > 0 && showCalculated === true">
+        <div class="col-md-12">
+
+            <div class="card calculate-view">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Результаты вычисления
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <tr>
+                                <td>Калории</td>
+                                <td>{{ resultActivity.calories }}</td>
+                            </tr>
+                            <tr>
+                                <td>Время</td>
+                                <td>{{ timeToStr(resultActivity.time) }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center" ng-if="isActivityLoading == false && getCalculatedActivities().length === 0">
+        <h2><i class="fa fa-flag"></i></h2>
+        <h2>Записи не найдены. Добавьте запись.</h2>
+    </div>
+
+    <div class="text-center" ng-if="isActivityLoading == true">
+        <h2><i class="fa fa-spinner fa-spin"></i></h2>
+        <h2>Загрузка...</h2>
+    </div>
+
+    <div class="row" ng-if="getCalculatedActivities().length > 0 && isActivityLoading == false">
+        <div class="col-md-12">
+            <div class="form-group float-right" style="margin-top:30px;">
+                <input class="form-control" type="text" ng-model="searchText" placeholder="Найти...">
+            </div>
+            <div class="table-responsible">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Калории</th>
+                            <th>Время</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in getCalculatedActivities() | filter: searchText" ng-click="selectActivity(item)" ng-class="{'selected-row': item.selected}">
+
+                            <td ng-bind="item.name"></td>
+                            <td ng-bind="item.calories"></td>
+                            <td>{{ timeToStr(item.time) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="add-activity-dialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Активность</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="add_activity_form">
+                    <div class="form-group" >
+                        <label>Активность</label>
+                        <select class="form-control" required name="activity" ng-model="edit_activity.activity" ng-class="{'is-invalid': add_activity_form.activity.$invalid}">
+                            <option value="">Выбрать...</option>
+                            <option ng-repeat="item in getActivityData()" ng-value="item">{{ item.activity_name }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Время активности</label>
+                    </div>
+                    <div class="form-group form-inline">
+                        <label>Часы: </label>
+                        <select ng-model="edit_activity.hours" class="form-control">
+                            <option value="">0</option>
+                            <option ng-repeat="hours in hoursArray" ng-value="hours">{{ hours }}</option>
+                        </select>
+                        <label>Минуты: </label>
+                        <select ng-model="edit_activity.minutes" class="form-control">
+                            <option value="">0</option>
+                            <option ng-repeat="minutes in sixthArray" ng-value="minutes">{{ minutes }}</option>
+                        </select>
+                        <label>Секунды: </label>
+                        <select ng-model="edit_activity.seconds" class="form-control">
+                            <option value="">0</option>
+                            <option ng-repeat="seconds in sixthArray" ng-value="seconds">{{ seconds }}</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                <button type="button" class="btn btn-primary" ng-click="saveActivity(edit_activity)" ng-disabled="add_activity_form.$invalid || saveActivityBtnLoading"><i class="fa fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>

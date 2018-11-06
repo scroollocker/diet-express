@@ -30,4 +30,8 @@ router.get('/activity', function(req, res, next) {
     res.render('activity/main');
 });
 
+router.get('/activity/calculator', function(req, res, next) {
+    res.render('activity/calculator');
+});
+
 module.exports = router;

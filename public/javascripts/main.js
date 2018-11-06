@@ -25,6 +25,10 @@ app.config(function($routeProvider) {
             templateUrl : "/templates/foods",
             controller: 'HistoryController'
         })
+        .when("/activity/calculator", {
+            templateUrl: "/templates/activity/calculator",
+            controller: 'ActivityCalculatorController'
+        })
         .when("/activity", {
             templateUrl: "/templates/activity",
             controller: 'ActivityController'
