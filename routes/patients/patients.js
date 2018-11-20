@@ -355,4 +355,45 @@ router.post('/remove', function (req, res, next) {
     }
 });
 
+router.post('/modifyRegimen', function(req, res, next) {
+    var data = req.body;
+    var rules = {
+        food_id: 'required',
+        regimen: 'required'
+    };
+    var messages = {
+        required: 'Поле :attr обязательное'
+    };
+    var fields = {
+        food_id: 'ID записи',
+        regimen: 'Режим'
+    };
+
+    var v = validator.make(data, rules, messages, fields);
+
+    if (v.fails()) {
+        var errors = v.getErrors();
+        var errMsg = validatorHelper.errorToString(errors);
+        res.send({
+            status: false,
+            message: errMsg
+        });
+    }
+    else {
+        patientModel.modifyRegimen(req.environment.database, data, function(err) {
+            if (err) {
+                res.send({
+                    status: false,
+                    message: err.message
+                });
+            }
+            else {
+                res.send({
+                    status: true
+                })
+            }
+        });
+    }
+});
+
 module.exports = router;

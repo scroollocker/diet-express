@@ -38,10 +38,16 @@ module.exports = {
                     patient.fio,
                     patient.age,
                     patient.weight,
-                    patient.gender
+                    patient.gender,
+                    patient.height,
+                    patient.nationality,
+                    patient.job,
+                    patient.address,
+                    patient.contacts,
+                    patient.diagnosis
                 ];
 
-                var sql = 'insert into patients(fio, age, weight, gender) values( ?, ?, ?, ?);';
+                var sql = 'insert into patients(fio, age, weight, gender, height, nationality, job, address, contacts, diagnosis) values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
 
                 connection.query(sql, params, function (err, result) {
                     databaseHelper.closeConnection(connection);
@@ -70,10 +76,16 @@ module.exports = {
                    patient.age,
                    patient.weight,
                    patient.gender,
+                   patient.height,
+                   patient.nationality,
+                   patient.job,
+                   patient.address,
+                   patient.contacts,
+                   patient.diagnosis,
                    patient.patient_id
                ];
 
-               var sql = 'update patients set fio = ?, age = ?, weight = ?, gender = ? where patient_id = ?;';
+               var sql = 'update patients set fio = ?, age = ?, weight = ?, gender = ?, height = ?, nationality = ?, job = ?, address = ?, contacts = ?, diagnosis = ? where patient_id = ?;';
 
                connection.query(sql, params, function (err, result) {
                   databaseHelper.closeConnection(connection);
@@ -162,6 +174,33 @@ module.exports = {
             });
         }
     },
+    modifyRegimen: function(config, data, callback) {
+        if (callback && typeof callback === 'function') {
+            databaseHelper.getConnection(config, function(err, connection) {
+                if (err) {
+                    console.log(err);
+                    callback(new Error('Ошибка соеденения с БД'));
+                    return;
+                }
+                var sql = 'update foods set `regimen_code` = ? where `food_id` = ?;';
+                var params = [
+                    data.regimen,
+                    data.food_id
+                ];
+
+                connection.query(sql, params, function(err) {
+                    databaseHelper.closeConnection(connection);
+                    if (err) {
+                        console.log(err);
+                        callback(new Error('Произошла ошибка БД при обновлении данных'));
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            });
+        }
+    },
     savePatientFoods: function (config, data, callback) {
         if (callback && typeof callback === 'function') {
             databaseHelper.getConnection(config, function (err, connection) {
@@ -171,7 +210,7 @@ module.exports = {
                     return;
                 }
 
-                var sql = 'INSERT INTO foods (`patient_id`,`date`,`voda`,`belok`,`jir`,`uglevod`,`hloridy`,`kletchatka`,`krahmal`,`pektin`,`org_kisloty`,`zola`,`kaliy`,`kalciy`,`magniy`,`natriy`,`fosfor`,`zhelezo`,`yod`,`kobalt`,`marganec`,`med`,`malibden`,`ftor`,`cink`,`aretinol`,`bkarotin`,`etokoferol`,`caskorbinka`,`b1`,`b2`,`bc`,`pp`,`kkal`,`perevar`,`okislenie`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);';
+                var sql = 'INSERT INTO foods (`patient_id`,`date`,`voda`,`belok`,`jir`,`uglevod`,`hloridy`,`kletchatka`,`krahmal`,`pektin`,`org_kisloty`,`zola`,`kaliy`,`kalciy`,`magniy`,`natriy`,`fosfor`,`zhelezo`,`yod`,`kobalt`,`marganec`,`med`,`malibden`,`ftor`,`cink`,`aretinol`,`bkarotin`,`etokoferol`,`caskorbinka`,`b1`,`b2`,`bc`,`pp`,`kkal`,`perevar`,`okislenie`, `regimen_code`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);';
 
                 var params = [
                     data.patient_id,
@@ -209,7 +248,8 @@ module.exports = {
                     data.pp,
                     data.kkal,
                     data.perevar,
-                    data.okislenie
+                    data.okislenie,
+                    data.regimen_code
                 ];
 
                 connection.query(sql, params, function (err, result) {

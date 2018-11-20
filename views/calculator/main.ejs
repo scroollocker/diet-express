@@ -325,11 +325,20 @@
             <div class="modal-body">
                 <form name="saveForm">
                     <div class="form-group">
-                    <label>Пациент: </label>
-                    <select ng-model="selectedPatient" name="selected_patient" ng-class="{'is-invalid': saveForm.selected_patient.$invalid}" class="form-control" required>
-                        <option value="">Выберите...</option>
-                        <option ng-value="patient" ng-repeat="patient in getPatients()">{{ patient.fio }}</option>
-                    </select>
+                        <label>Пациент: </label>
+                        <select ng-model="selectedPatient" name="selected_patient" ng-class="{'is-invalid': saveForm.selected_patient.$invalid}" class="form-control" required>
+                            <option value="">Выберите...</option>
+                            <option ng-value="patient" ng-repeat="patient in getPatients()">{{ patient.fio }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Тип приема пищи: </label>
+                        <select ng-model="selectedRegimen" name="selected_regimen" ng-class="{'is-invalid': saveForm.selected_regimen.$invalid}" class="form-control" required>
+                            <option value="">Выберите...</option>
+                            <option value="BREAKFAST">Завтрак</option>
+                            <option value="LUNCH">Обед</option>
+                            <option value="DINNER">Ужин</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Дата:</label>

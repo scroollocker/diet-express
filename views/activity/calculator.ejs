@@ -10,7 +10,7 @@
         <div class="col-md-12">
             <div class="float-right">
                 <button ng-click="add()" class="btn btn-primary"><i class="fa fa-plus"></i> Добавить</button>
-                <button ng-disabled="getCalculatedActivities().length == 0" ng-click="calculate()" class="btn btn-warning"><i class="fa fa-calculator"></i> Подсчитать</button>
+                <button ng-click="calcWin()" ng-disabled="getCalculatedActivities().length == 0" class="btn btn-warning"><i class="fa fa-calculator"></i> Подсчет СРЭ</button>
             </div>
         </div>
     </div>
@@ -29,36 +29,7 @@
         </ul>
     </div>
 
-    <div class="row" style="margin-top: 30px;" ng-if="getCalculatedActivities().length > 0 && showCalculated === true">
-        <div class="col-md-12">
-
-            <div class="card calculate-view">
-                <div class="card-header" id="headingOne">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Результаты вычисления
-                        </button>
-                    </h5>
-                </div>
-
-                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <tr>
-                                <td>Калории</td>
-                                <td>{{ resultActivity.calories }}</td>
-                            </tr>
-                            <tr>
-                                <td>Время</td>
-                                <td>{{ timeToStr(resultActivity.time) }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    
     <div class="text-center" ng-if="isActivityLoading == false && getCalculatedActivities().length === 0">
         <h2><i class="fa fa-flag"></i></h2>
         <h2>Записи не найдены. Добавьте запись.</h2>
@@ -87,10 +58,17 @@
                         <tr ng-repeat="item in getCalculatedActivities() | filter: searchText" ng-click="selectActivity(item)" ng-class="{'selected-row': item.selected}">
 
                             <td ng-bind="item.name"></td>
-                            <td ng-bind="item.calories"></td>
+                            <td>{{toFixed(item.calories)}}</td>
                             <td>{{ timeToStr(item.time) }}</td>
                         </tr>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>Итого:</strong></td>
+                            <td>{{ toFixed(resultActivity.calories) }}</td>
+                            <td>{{ timeToStr(resultActivity.time) }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -140,6 +118,102 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
                 <button type="button" class="btn btn-primary" ng-click="saveActivity(edit_activity)" ng-disabled="add_activity_form.$invalid || saveActivityBtnLoading"><i class="fa fa-save"></i> Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="add-activity-calc" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подсчет РЭ</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form name="cal_re_form">
+                    <div class="form-group">
+                            <label>Пациент</label>
+                            <select class="form-control" required name="patient" ng-model="calc_activity.patient" ng-class="{'is-invalid': cal_re_form.patient.$invalid}">
+                                <option value="">Выбрать...</option>
+                                <option ng-repeat="item in getPatientsData()" ng-value="item">{{ item.fio }}</option>
+                            </select>
+                    </div>
+                    <div class="form-group" ng-if="calc_activity.patient">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Пол</th>
+                                        <th>Рост</th>
+                                        <th>Вес</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ calc_activity.patient.gender == 1 ? 'Муж' : 'Жен' }}</td>
+                                        <td>{{ calc_activity.patient.height }}</td>
+                                        <td>{{ calc_activity.patient.weight }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group" >
+                            <label>Расход энергии</label>
+                            <input type="number" ng-value="toFixed(resultActivity.calories)" disabled class="form-control">
+                        </div>
+                    <div class="form-group" >
+                        <label>Число А <a href="images/table_1.jpg" target="_blank"><i class="fa fa-info-circle" style="color: blue"></i></a></label>
+                        <input type="number" ng-model="calc_activity.a_var" class="form-control">
+                    </div>
+                    <div class="form-group" >
+                        <label>Число В 
+                            <span ng-if="calc_activity.patient">
+                                <a ng-if="calc_activity.patient.gender == 1" target="_blank" href="images/table_2.jpg">
+                                    <i class="fa fa-info-circle" style="color: blue"></i>
+                                </a>
+                                <a ng-if="calc_activity.patient.gender == 2" target="_blank" href="images/table_3.jpg">
+                                    <i class="fa fa-info-circle" style="color: blue"></i>
+                                </a>
+                            </span>
+                        </label>
+                        <input type="number" ng-model="calc_activity.b_var" class="form-control">
+                    </div>
+                </form>
+                <div ng-if="calculation != null">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <strong>ОО:</strong>
+                            </td>
+                            <td>
+                                {{ toFixed(calculation.oo) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>СДД:</strong>
+                            </td>
+                            <td>
+                                    {{ toFixed(calculation.sdd)}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Средний расход энергии:</strong>
+                            </td>
+                            <td>
+                                        {{toFixed(calculation.sre)}}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i> Закрыть</button>
+                <button ng-disabled="cal_re_form.$invalid" type="button" class="btn btn-success" ng-click="calcRe()">Расчет</button>
             </div>
         </div>
     </div>

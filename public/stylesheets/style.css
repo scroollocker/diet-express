@@ -20,7 +20,9 @@
 }
 
 .availible-ingredients {
-  max-width: 400px;
+  max-height: 400px;
+  overflow: scroll;
+  font-size: 13px;
 }
 
 .calculate-view {

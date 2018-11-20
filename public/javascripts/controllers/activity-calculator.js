@@ -1,13 +1,17 @@
-app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider', function ($scope, ActivityProvider) {
+app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','PatientFactory', function ($scope, ActivityProvider, PatientFactory) {
 
     $scope.edit_activity = null;
+    $scope.calc_activity = null;
     $scope.selectedActivity = null;
     $scope.activity_data = [];
+    $scope.patients_data = [];
     $scope.isActivityLoading = false;
     $scope.calculatedActivities = [];
     $scope.showCalculated = false;
     $scope.resultActivity = null;
     $scope.isEdit = false;
+
+    $scope.calculation = null;
 
     $scope.hoursArray = [];
     $scope.sixthArray = [];
@@ -41,9 +45,17 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider', fu
         return $scope.activity_data;
     };
 
+    $scope.getPatientsData = function() {
+        return $scope.patients_data;
+    }
+
     $scope.getCalculatedActivities = function () {
         return $scope.calculatedActivities;
     };
+
+    $scope.toFixed = function(val) {
+        return parseFloat(val).toFixed(2);
+    }
 
     $scope.loadActivities = function () {
         $scope.isActivityLoading = true;
@@ -59,11 +71,29 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider', fu
         });
     };
 
+    $scope.loadPatients = function() {
+        $scope.patients_data = [];
+        PatientFactory.getActivePatients(function(err, patients) {
+            if (err) {
+                alert(err.message);
+            }
+            else {
+                $scope.patients_data = patients;
+            }
+        });
+    }
+
     $scope.add = function() {
         $('#add-activity-dialog').modal('show');
         $scope.edit_activity = null;
         $scope.isEdit = false;
     };
+
+    $scope.calcWin = function() {
+        $scope.loadPatients();
+        $scope.calculation = null;
+        $('#add-activity-calc').modal('show');
+    }
 
     $scope.calculate = function() {
         var calories = 0;
@@ -81,6 +111,31 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider', fu
         $scope.showCalculated = true;
 
     };
+
+    $scope.calcRe = function() {
+        $scope.calculation = null;
+        if ($scope.calc_activity.a_var && $scope.calc_activity.b_var) {
+            var a = parseFloat($scope.calc_activity.a_var);
+            var b = parseFloat($scope.calc_activity.b_var);
+            if (isNaN(a) || isNaN(b)) {
+                alert('Введеные значения должны быть числами');
+            }
+            else {
+                var summ = a + b;
+                var precent = summ * 0.1;
+                var sre = $scope.resultActivity.calories + summ + precent;
+                $scope.calculation = {
+                    oo: summ,
+                    sdd: precent,
+                    sre: sre
+                };
+            }
+
+        }
+        else {
+            alert('Введите число А и число В');
+        }
+    }
 
     $scope.edit = function() {
         if ($scope.selectedActivity) {
@@ -109,6 +164,7 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider', fu
             });
 
             $scope.selectedActivity = null;
+            $scope.calculate();
         }
     };
 
@@ -153,6 +209,7 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider', fu
         }
         $('#add-activity-dialog').modal('hide');
         $scope.showCalculated = false;
+        $scope.calculate();
 
     };
 

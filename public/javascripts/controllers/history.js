@@ -2,6 +2,8 @@ app.controller('HistoryController', ['$scope', '$routeParams', '$location', 'His
 
     $scope.patient_id = $routeParams.patientId;
     $scope.selectedFood = null;
+    $scope.edit_regimen = null;
+    $scope.kkalSum = 0;
 
     $scope.foods = [];
 
@@ -47,8 +49,29 @@ app.controller('HistoryController', ['$scope', '$routeParams', '$location', 'His
                     $scope.foods.splice(index, 1);
                 }
             });
+            $scope.calculateKkal();
             $scope.hideToolbar();
         })
+    };
+
+    $scope.edit = function() {
+        $scope.edit_regimen = {
+            food_id: $scope.selectedFood.food_id,
+            regimen: $scope.selectedFood.regimen_code
+        }
+        $('#change-regemen-dialog').modal('show');
+    };
+
+    $scope.saveRegimen = function(regimen) {
+        HistoryFactory.saveRegimen(regimen, function(err) {
+            if (err) {
+                alert(err.message);
+            }
+            else {
+                $scope.selectedFood.regimen_code = regimen.regimen;
+                $('#change-regemen-dialog').modal('hide');
+            }
+        });
     };
 
     $scope.getFoods = function() {
@@ -60,8 +83,10 @@ app.controller('HistoryController', ['$scope', '$routeParams', '$location', 'His
         var dateEnd = jQuery('#date_to').val();
 
         if (dateStart && dateEnd) {
-            var momentStart = moment(dateStart, 'YYYY-MM-DD');
-            var momentEnd = moment(dateEnd, 'YYYY-MM-DD');
+            var chDateS = dateStart + ' 00:00:00';
+            var chDateE = dateEnd + ' 23:59:59';
+            var momentStart = moment(chDateS, 'YYYY-MM-DD HH:mm:ss');
+            var momentEnd = moment(chDateE, 'YYYY-MM-DD HH:mm:ss');
 
             console.log(dateStart, dateEnd);
 
@@ -71,7 +96,7 @@ app.controller('HistoryController', ['$scope', '$routeParams', '$location', 'His
             else if (!momentEnd.isValid()) {
                 alert('Дата окончания ошибочная');
             }
-            else if (!momentStart.isBefore(momentEnd, 'day')) {
+            else if (!momentStart.isBefore(momentEnd, 'second')) {
                 alert('Дата начала должна быть меньше даты окончания')
             }
             else {
@@ -85,6 +110,32 @@ app.controller('HistoryController', ['$scope', '$routeParams', '$location', 'His
 
     $scope.toNormalDate = function(date) {
         return moment(date).format('DD.MM.YYYY');
+    }
+
+    $scope.regimenToStr = function(regimen) {
+        switch(regimen) {
+            case 'BREAKFAST': return 'Завтрак'
+            case 'LUNCH': return 'Обед'
+            case 'DINNER': return 'Ужин'
+            default: return '';
+        }
+    }
+
+    $scope.getPercentage = function(val) {
+        if (val == 0) {
+            return 0;
+        }
+        if ($scope.kkal == 0) {
+            return 0;
+        }
+        return (parseFloat(val) * 100 / $scope.kkalSum).toFixed(2);
+    }
+
+    $scope.calculateKkal = function() {
+        $scope.kkalSum = 0;
+        $scope.foods.forEach(function(item) {
+            $scope.kkalSum += parseFloat(item.kkal);
+        });
     }
 
     $scope.loadFoods = function() {
@@ -109,6 +160,7 @@ app.controller('HistoryController', ['$scope', '$routeParams', '$location', 'His
             }
             else {
                 $scope.foods = foods;
+                $scope.calculateKkal();
             }
         });
     };

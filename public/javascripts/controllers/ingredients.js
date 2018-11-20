@@ -118,10 +118,10 @@ app.controller('IngredientsController', ['$scope', 'IngredientsFactory', 'Catego
 
             if ($scope.selectedIngredient) {
                 $scope.selectedIngredient.selected = false;
+                $scope.selectedIngredient = null;
             }
-
-            $scope.selectedIngredient = ingredient;
-            $scope.selectedIngredient.selected = true;
+            
+            $scope.selectIngredient(ingredient);
 
             jQuery('#ingredient-edit-dialog').modal('hide');
 

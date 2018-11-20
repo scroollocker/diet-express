@@ -122,6 +122,7 @@ app.controller('CalculatorController', ['$scope', 'IngredientsFactory', 'Patient
     $scope.saveToUser = function(patient) {
         var request = $scope.calculatedIngredient;
         request.patient_id = patient.patient_id;
+        request.regimen_code = $scope.selectedRegimen;
 
         var date = jQuery('#select-date').val();
         if (!date || date == '') {
