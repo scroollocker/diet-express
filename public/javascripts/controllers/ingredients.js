@@ -30,6 +30,9 @@ app.controller('IngredientsController', ['$scope', 'IngredientsFactory', 'Catego
             $scope.selectedIngredient = null;
         }
         else {
+            if ($scope.selectedIngredient) {
+                $scope.selectedIngredient.selected = false;
+            }
             $scope.selectedIngredient = ingredient;
             $scope.selectedIngredient.selected = true;
         }

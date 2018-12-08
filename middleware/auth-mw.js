@@ -7,7 +7,7 @@ module.exports = function (req, res, next) {
         next();
     }
     else {
-        // res.redirect('/login');
-        next();
+        res.redirect('/login'); 
+        // next();
     }
 };

@@ -3,7 +3,7 @@ var databaseHelper = require('../helpers/database-helper');
 var moment = require('moment');
 
 module.exports = {
-    getPatients: function (config, callback) {
+    getPatients: function (config, user_id, callback) {
         if (callback && typeof callback === 'function') {
             databaseHelper.getConnection(config, function (err, connection) {
                if (err) {
@@ -11,8 +11,11 @@ module.exports = {
                    callback(new Error('Ошибка при соединении с БД'));
                    return;
                }
-               var sql = 'select * from patients order by disable asc, fio';
-               connection.query(sql, function (err, result, fields) {
+               var sql = 'select * from patients where user_id = ? order by disable asc, fio';
+               var params = [
+                    user_id
+               ]
+               connection.query(sql, params, function (err, result, fields) {
                    databaseHelper.closeConnection(connection);
                    if (err) {
                        console.log(err);
@@ -25,7 +28,7 @@ module.exports = {
             });
         }
     },
-    addPatient: function (config, patient, callback) {
+    addPatient: function (config, patient, user_id, callback) {
         if (callback && typeof callback === 'function') {
             databaseHelper.getConnection(config, function (err, connection) {
                 if (err) {
@@ -44,10 +47,11 @@ module.exports = {
                     patient.job,
                     patient.address,
                     patient.contacts,
-                    patient.diagnosis
+                    patient.diagnosis,
+                    user_id
                 ];
 
-                var sql = 'insert into patients(fio, age, weight, gender, height, nationality, job, address, contacts, diagnosis) values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
+                var sql = 'insert into patients(fio, age, weight, gender, height, nationality, job, address, contacts, diagnosis, user_id) values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
 
                 connection.query(sql, params, function (err, result) {
                     databaseHelper.closeConnection(connection);
@@ -152,7 +156,7 @@ module.exports = {
             })
         }
     },
-    getPatientsActive: function (config, callback) {
+    getPatientsActive: function (config, user_id, callback) {
         if (callback && typeof callback === 'function') {
             databaseHelper.getConnection(config, function (err, connection) {
                 if (err) {
@@ -160,8 +164,11 @@ module.exports = {
                     callback(new Error('Ошибка при соединении с БД'));
                     return;
                 }
-                var sql = 'select * from patients where disable = 0 order by fio';
-                connection.query(sql, function (err, result, fields) {
+                var sql = 'select * from patients where disable = 0 and user_id = ? order by fio';
+                var params = [
+                    user_id
+                ]
+                connection.query(sql,params,  function (err, result, fields) {
                     databaseHelper.closeConnection(connection);
                     if (err) {
                         console.log(err);

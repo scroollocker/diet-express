@@ -18,7 +18,7 @@ var validateValidMoment = function (name, value, params) {
 }
 
 router.get('/all', function(req, res, next) {
-    patientModel.getPatients(req.environment.database, function (err, patients) {
+    patientModel.getPatients(req.environment.database, req.user.user_id, function (err, patients) {
         if (err) {
             res.send({
                 status: false,
@@ -35,7 +35,7 @@ router.get('/all', function(req, res, next) {
 });
 
 router.get('/active', function(req, res, next) {
-    patientModel.getPatientsActive(req.environment.database, function (err, patients) {
+    patientModel.getPatientsActive(req.environment.database,req.user.user_id, function (err, patients) {
         if (err) {
             res.send({
                 status: false,
