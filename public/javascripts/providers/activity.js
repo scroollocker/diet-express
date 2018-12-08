@@ -1,9 +1,9 @@
 app.factory('ActivityProvider', ['$http', function($http) {
     
     return {
-        getActivity: function(callback) {
+        getActivity: function(category, callback) {
             if (callback && typeof callback === 'function') {
-                $http.get('/activity/all').then(function(response) {
+                $http.get('/activity/all/'+category).then(function(response) {
                     response = response.data;
                     if (response.status) {
                         callback(null, response.activity);

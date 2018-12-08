@@ -25,11 +25,11 @@ app.config(function($routeProvider) {
             templateUrl : "/templates/foods",
             controller: 'HistoryController'
         })
-        .when("/activity/calculator", {
+        .when("/activity/calculator/:category", {
             templateUrl: "/templates/activity/calculator",
             controller: 'ActivityCalculatorController'
         })
-        .when("/activity", {
+        .when("/activity/:category", {
             templateUrl: "/templates/activity",
             controller: 'ActivityController'
         })

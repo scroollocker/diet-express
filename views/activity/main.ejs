@@ -28,6 +28,14 @@
         </ul>
     </div>
 
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" style="color: #0056b3;" ng-class="{'active': isActive('1')}" href="#!/activity/1">Активности в час</a>
+        </li>
+        <li class="nav-item">
+         <a class="nav-link" style="color: #0056b3;"   ng-class="{'active': isActive('2')}" href="#!/activity/2">Активности в минуту</a>
+        </li>
+      </ul>
     <div class="text-center" ng-if="isActivityLoading == false && getActivityData().length === 0">
         <h2><i class="fa fa-flag"></i></h2>
         <h2>Записи не найдены. Добавьте запись.</h2>
@@ -49,7 +57,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Название</th>
-                            <th>Калории в час</th>
+                            <th>{{getActivityText(activityCategory)}}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,7 +89,7 @@
                         <input type="text" ng-class="{'is-invalid': add_activity_form.title.$invalid}" class="form-control" name="title" ng-model="edit_activity.activity_name" required>
                     </div>
                     <div class="form-group">
-                        <label>Калории в час</label>
+                        <label>{{getActivityText(activityCategory)}}</label>
                         <input type="number" ng-class="{'is-invalid': add_activity_form.callories.$invalid}" class="form-control" name="calories" ng-model="edit_activity.calorie" required>
                     </div>
                 </form>

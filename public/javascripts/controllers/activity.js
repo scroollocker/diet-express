@@ -1,10 +1,16 @@
-app.controller('ActivityController', ['$scope', 'ActivityProvider', function($scope, ActivityProvider) {
+app.controller('ActivityController', ['$scope', 'ActivityProvider', '$routeParams', function($scope, ActivityProvider, $routeParams) {
 
+    
     $scope.edit_activity = {};
     $scope.selectedActivity = null;
     $scope.activity_data = [];
     $scope.isActivityLoading = false;
     $scope.saveActivityBtnLoading = false;
+    $scope.activityCategory = '1';
+
+    $scope.isActive = function(category) {
+        return $scope.activityCategory === category;
+    }
 
     $scope.hideToolbar = function() {
         if ($scope.selectedActivity) {
@@ -35,13 +41,33 @@ app.controller('ActivityController', ['$scope', 'ActivityProvider', function($sc
         return $scope.activity_data;
     }
 
+    $scope.getActivityText = function(category) {
+        console.log(category);
+        switch(category) {
+            default:
+            case '1': {
+                return 'Кал. в час';
+            }
+            case '2': {
+                return 'Кал. в минуту';
+            }
+        }
+    }
+
     $scope.onLoad = function() {
+        var category = $routeParams.category;
+        if (category) {
+            $scope.activityCategory = category;
+        }
+        else {
+            $scope.activityCategory = 1;
+        }
         $scope.loadActivity();
     }
 
     $scope.loadActivity = function() {
         $scope.isActivityLoading = true;
-        ActivityProvider.getActivity(function(err, activity) {
+        ActivityProvider.getActivity($scope.activityCategory, function(err, activity) {
             $scope.isActivityLoading = false;
 
             if (err) {
@@ -69,6 +95,7 @@ app.controller('ActivityController', ['$scope', 'ActivityProvider', function($sc
     $scope.saveActivity = function(activity) {
         if ($scope.add_activity_form.$valid) {
             $scope.saveActivityBtnLoading = true;
+            activity.category = $scope.activityCategory;
 
             ActivityProvider.modifyActivity($scope.edit_activity, function(err, activity) {
                 $scope.saveActivityBtnLoading = false;

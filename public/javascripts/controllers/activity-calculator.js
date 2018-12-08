@@ -1,4 +1,4 @@
-app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','PatientFactory', function ($scope, ActivityProvider, PatientFactory) {
+app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','PatientFactory', '$routeParams', function ($scope, ActivityProvider, PatientFactory, $routeParams) {
 
     $scope.edit_activity = null;
     $scope.calc_activity = null;
@@ -10,6 +10,7 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','Pa
     $scope.showCalculated = false;
     $scope.resultActivity = null;
     $scope.isEdit = false;
+    $scope.activityCategory = '1';
 
     $scope.calculation = null;
 
@@ -57,9 +58,13 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','Pa
         return parseFloat(val).toFixed(2);
     }
 
+    $scope.isActive = function(category) {
+        return $scope.activityCategory === category;
+    }
+
     $scope.loadActivities = function () {
         $scope.isActivityLoading = true;
-        ActivityProvider.getActivity(function (err, activities) {
+        ActivityProvider.getActivity($scope.activityCategory, function (err, activities) {
             $scope.isActivityLoading = false;
 
             if (err) {
@@ -92,7 +97,14 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','Pa
     $scope.calcWin = function() {
         $scope.loadPatients();
         $scope.calculation = null;
-        $('#add-activity-calc').modal('show');
+        $scope.calc_activity = null;
+        if ($scope.activityCategory === '1') {            
+            $('#add-activity-calc').modal('show');
+        }
+        else {
+            
+            $('#add-activity-calc-min').modal('show');
+        }
     }
 
     $scope.calculate = function() {
@@ -112,28 +124,54 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','Pa
 
     };
 
+    $scope.changePatient = function(patient) {
+        $scope.calc_activity.weight = patient.weight;
+    };
+
     $scope.calcRe = function() {
-        $scope.calculation = null;
-        if ($scope.calc_activity.a_var && $scope.calc_activity.b_var) {
-            var a = parseFloat($scope.calc_activity.a_var);
-            var b = parseFloat($scope.calc_activity.b_var);
-            if (isNaN(a) || isNaN(b)) {
-                alert('Введеные значения должны быть числами');
+        if ($scope.activityCategory === '1') {
+            $scope.calculation = null;
+            if ($scope.calc_activity.a_var && $scope.calc_activity.b_var) {
+                var a = parseFloat($scope.calc_activity.a_var);
+                var b = parseFloat($scope.calc_activity.b_var);
+                if (isNaN(a) || isNaN(b)) {
+                    alert('Введеные значения должны быть числами');
+                }
+                else {
+                    var summ = a + b;
+                    var precent = summ * 0.1;
+                    var sre = $scope.resultActivity.calories + summ + precent;
+                    $scope.calculation = {
+                        oo: summ,
+                        sdd: precent,
+                        sre: sre
+                    };
+                }
+
             }
             else {
-                var summ = a + b;
-                var precent = summ * 0.1;
-                var sre = $scope.resultActivity.calories + summ + precent;
-                $scope.calculation = {
-                    oo: summ,
-                    sdd: precent,
-                    sre: sre
-                };
+                alert('Введите число А и число В');
             }
-
         }
         else {
-            alert('Введите число А и число В');
+            
+            if ($scope.calc_activity.weight) {
+                var weight = parseFloat($scope.calc_activity.weight);
+                if (isNaN(weight)) {
+                    alert('Введеные значения должны быть числами');
+                }
+                else {
+                    
+                    var sre = $scope.resultActivity.calories * weight;
+                    $scope.calculation = {
+                        
+                        sre: sre
+                    };
+                }
+            }
+            else {
+                alert('Введите массу тела');
+            }
         }
     }
 
@@ -187,7 +225,13 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','Pa
             return;
         }
 
-        var calories = (activity.activity.calorie * time) / 3600;
+        var calories = 0;
+        if ($scope.activityCategory === '1') {
+            calories = (activity.activity.calorie * time) / 3600;
+        }
+        else {
+            calories = (activity.activity.calorie * time) / 60;
+        }
 
         var calculated = {
             activity: activity.activity,
@@ -234,13 +278,19 @@ app.controller('ActivityCalculatorController', ['$scope', 'ActivityProvider','Pa
     };
 
     $scope.onLoad = function () {
+        var category = $routeParams.category;
+        if (category) {
+            $scope.activityCategory = category;
+        }
+        else {
+            $scope.activityCategory = 1;
+        }
         $scope.loadActivities();
         for (var i = 1; i < 24; i++) {
             $scope.hoursArray.push(i);
         }
         for (var i = 1; i < 60; i++) {
             $scope.sixthArray.push(i);
-
         }
     }
 }]);

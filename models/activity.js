@@ -1,7 +1,7 @@
 var databaseHelper = require('../helpers/database-helper');
 
 module.exports = {
-    getActivity: function(config, callback) {
+    getActivity: function(config, category, callback) {
         if (callback && typeof callback === 'function') {
             databaseHelper.getConnection(config, function(err, connection) {
                 if (err) {
@@ -10,9 +10,13 @@ module.exports = {
                     return;
                 }
 
-                var sql = 'select * from activity;';
+                var sql = 'select * from activity where category = ?;';
 
-                connection.query(sql, function(err, result) {
+                var params = [
+                    category
+                ]
+
+                connection.query(sql,params, function(err, result) {
                     databaseHelper.closeConnection(connection);
                     if (err) {
                         console.log(err);
@@ -32,11 +36,12 @@ module.exports = {
                     callback(new Error('Ошибка соеденения с БД'));
                     return;
                 }
-                var sql = 'insert into activity (`activity_name`, `calorie`) values (?, ?);';
+                var sql = 'insert into activity (`activity_name`, `calorie`, `category`) values (?, ?, ?);';
 
                 var params = [
                     data.activity_name,
-                    data.calorie
+                    data.calorie,
+                    data.category
                 ];
 
                 connection.query(sql, params, function(err, result) {

@@ -6,8 +6,9 @@ const validatorHelper = require('../../helpers/validator-helper');
 
 const validator = require('Validator');
 
-router.get('/all', function(req, res, next) {
-    activityModel.getActivity(req.environment.database, function(err, activity) {
+router.get('/all/:category', function(req, res, next) {
+    
+    activityModel.getActivity(req.environment.database, req.params.category, function(err, activity) {
         if (err) {
             res.send({
                 status: false,
