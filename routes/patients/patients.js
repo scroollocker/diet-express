@@ -201,6 +201,7 @@ router.post('/modify', function (req, res, next) {
     }
     else {
         var resultFun = function (err, patient) {
+            
             if (err) {
                 res.send({
                     status: false,
@@ -214,11 +215,14 @@ router.post('/modify', function (req, res, next) {
             });
         };
 
+        
         if (data.patient_id !== undefined) {
-            patientModel.editPatient(req.environment.database, data, resultFun);
+            
+            patientModel.editPatient(req.environment.database, data, req.user.user_id, resultFun);
         }
         else {
-            patientModel.addPatient(req.environment.database, data, resultFun);
+            
+            patientModel.addPatient(req.environment.database, data, req.user.user_id, resultFun);
         }
     }
 });

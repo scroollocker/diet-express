@@ -29,8 +29,11 @@ module.exports = {
         }
     },
     addPatient: function (config, patient, user_id, callback) {
+        
         if (callback && typeof callback === 'function') {
+            
             databaseHelper.getConnection(config, function (err, connection) {
+                
                 if (err) {
                     console.log(err);
                     callback(new Error('Ошибка соеденения с БД'));
