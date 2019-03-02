@@ -218,7 +218,7 @@ router.post('/modify', function (req, res, next) {
         
         if (data.patient_id !== undefined) {
             
-            patientModel.editPatient(req.environment.database, data, req.user.user_id, resultFun);
+            patientModel.editPatient(req.environment.database, data, resultFun);
         }
         else {
             
